@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Optional;
 
 @Path("/food-data")
 @Produces("application/json")
@@ -42,8 +43,13 @@ public class FoodDataResource {
 
     @GET
     @Path("/most-recent/{place}")
-    public FoodData getMostRecentByPlace(@PathParam("place") String place) {
-        return service.getMostRecentByPlace(place);
+    public Response getMostRecentForPlace(@PathParam("place") String place) {
+        Optional<FoodData> foodData = service.getMostRecentForPlace(place);
+        if (foodData.isPresent()) {
+            return Response.ok(foodData.get()).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
     }
 
 }

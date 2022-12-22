@@ -7,6 +7,7 @@ import io.quarkus.panache.common.Sort;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -39,8 +40,9 @@ public class FoodDataService {
         repository.deleteById(id);
     }
 
-    public FoodData getMostRecentByPlace(String place) {
-        return mapper.toDomain(repository.findMostRecentByPlace(place));
+
+    public Optional<FoodData> getMostRecentForPlace(String place) {
+        return repository.getMostRecentForPlace(place).map(mapper::toDomain);
     }
 
 }

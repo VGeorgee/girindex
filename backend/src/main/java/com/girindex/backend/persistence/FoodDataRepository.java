@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationScoped
 public class FoodDataRepository implements PanacheRepository<FoodDataEntity> {
@@ -15,12 +16,16 @@ public class FoodDataRepository implements PanacheRepository<FoodDataEntity> {
     @PersistenceContext
     EntityManager entityManager;
 
-    public FoodDataEntity findMostRecentByPlace(String place) {
-        TypedQuery<FoodDataEntity> query = entityManager.createQuery(
-                "SELECT fd FROM FoodDataEntity fd WHERE fd.place = :place ORDER BY fd.timestamp DESC", FoodDataEntity.class);
+    public Optional<FoodDataEntity> getMostRecentForPlace(String place) {
+        TypedQuery<FoodDataEntity> query = entityManager.createQuery("SELECT fd FROM FoodDataEntity fd WHERE fd.place = :place ORDER BY fd.timestamp DESC", FoodDataEntity.class);
         query.setParameter("place", place);
         query.setMaxResults(1);
-        return query.getSingleResult();
+        List<FoodDataEntity> resultList = query.getResultList();
+        if (resultList.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(resultList.get(0));
+        }
     }
 
 }
