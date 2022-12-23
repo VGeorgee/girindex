@@ -15,6 +15,14 @@
             text-decoration: none; /* Remove underline */
         }
 
+         li {
+          color: #fff; /* white text color */
+          background-color: rgba(255, 0, 0, 0.8); /* red background with 80% opacity */
+          padding: 10px 20px; /* 10 pixels top/bottom padding, 20 pixels left/right padding */
+          border-radius: 4px; /* rounded corners */
+          margin-bottom: 10px; /* 10 pixels margin at the bottom */
+        }
+
         /* Custom link hover style */
         a:hover {
             color: #ffffff; /* Set text color on hover */
@@ -75,6 +83,8 @@
     </style>
 </head>
 <body>
+
+<ul id="error-list" style="display: none;"></ul>
 <form class="form-container" method="POST" onsubmit="submitForm(event)">
     <table>
         <tr>
@@ -98,7 +108,6 @@
         </tr>
     </table>
 </form>
-<ul id="error-list" style="display: none;"></ul>
 <div style="position: absolute; bottom: 0; width: 100%; text-align: center; background-color: #4d79ff;">
     <p>Background photo by <a href="https://unsplash.com/@alexandermils">Alexander Mils</a> on Unsplash</p>
 </div>
@@ -127,17 +136,18 @@
             if (response.ok) {
               window.location.href = 'index.html';
             } else {
-            const errorList = document.getElementById('error-list');
-            errorList.innerHTML = ''; // clear the previous errors
+                const errorList = document.getElementById('error-list');
+                errorList.innerHTML = ''; // clear the previous errors
 
-            violations.forEach(violation => {
-              const li = document.createElement('li');
-              li.innerText = `${violation.propertyPath}: ${violation.message}`;
-              errorList.appendChild(li);
-            });
+                const violations = await response.json();
+                violations.violations.forEach(violation => {
+                  const li = document.createElement('li');
+                  li.innerText = `${violation.field}: ${violation.message}`;
+                  errorList.appendChild(li);
+                });
 
-            errorList.style.display = 'block';
-        }
+                errorList.style.display = 'block';
+            }
     }
 </script>
 </html>
