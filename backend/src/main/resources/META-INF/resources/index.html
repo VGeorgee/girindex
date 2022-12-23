@@ -20,9 +20,34 @@
             display: inline-block;
             font-size: 16px;
         }
+
+        #main-table {
+          width: 80%; /* Table width of 80% */
+          margin: 0 auto; /* Center the table horizontally */
+          border-collapse: collapse; /* Remove cell spacing */
+          background-color: #00FFCC; /* Red background color */
+          border-radius: 10px; /* Rounded corners */
+          box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Shadow effect */
+        }
+
+        #main-table td {
+          padding: 20px; /* Cell padding of 20 pixels */
+          text-align: center; /* Center text horizontally */
+          vertical-align: middle; /* Center text vertically */
+          font-size: 18px; /* 18 pixels font size */
+          font-weight: bold; /* Bold font weight */
+          color: #fff; /* White text color */
+        }
     </style>
 </head>
 <body>
+<table id="main-table">
+    <tr>
+        <td align="center">
+            <!-- Content goes here -->
+        </td>
+    </tr>
+</table>
 <button class="button" onclick="location.href='upload.html'">Upload</button>
 </body>
 </html>
