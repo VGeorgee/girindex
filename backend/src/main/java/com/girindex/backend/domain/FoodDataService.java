@@ -9,9 +9,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -59,20 +57,53 @@ public class FoodDataService {
 
     @Transactional
     public List<TimeEntry> getTimeSeries() {
-        List<FoodData> data = this.getAll();
-
-        return data.stream()
-                .collect(Collectors.groupingBy(FoodData::getTimestamp))
-                .entrySet().stream()
-                .map(entry -> {
-                    double avgPrice = entry.getValue().stream()
-                            .mapToInt(FoodData::getPrice)
-                            .average()
-                            .orElse(0);
-                    return new TimeEntry(entry.getKey(), avgPrice);
-                })
-                .sorted((e1, e2) -> e1.timestamp.compareTo(e2.timestamp))
-                .collect(Collectors.toList());
+        List<TimeEntry> timeSeries = new ArrayList<>();
+        List<FoodData> allData = this.getAll();
+        for (FoodData current : allData) {
+            List<FoodData> otherEntries = this.findAllBeforeTimestamp(current.getTimestamp(), current.getPlace());
+            int totalPrice = current.getPrice();
+            for (FoodData other : otherEntries) {
+                totalPrice += other.getPrice();
+            }
+            int averagePrice = totalPrice / (otherEntries.size() + 1);
+            timeSeries.add(new TimeEntry(current.getTimestamp(), averagePrice));
+        }
+        return timeSeries;
     }
+
+    public List<FoodData> findAllBeforeTimestamp(LocalDateTime timestamp, String place) {
+        // Read all data from the database
+        List<FoodData> allData = getAll();
+
+        // Sort the data by timestamp in reverse order
+        allData.sort((a, b) -> -a.getTimestamp().compareTo(b.getTimestamp()));
+
+        // Create a set of distinct places from the data
+        Set<String> places = allData.stream().map(FoodData::getPlace).collect(Collectors.toSet());
+
+        // Initialize the result list
+        List<FoodData> result = new ArrayList<>();
+
+        // Iterate over the set of places
+        for (String currentPlace : places) {
+            // Skip the current place if it's the same as the parameter
+            if (currentPlace.equals(place)) {
+                continue;
+            }
+
+            // Find the first entry in the sorted list with the same place as the current place
+            // and with a timestamp less than the parameter
+            Optional<FoodData> entry = allData.stream()
+                    .filter(data -> data.getPlace().equals(currentPlace))
+                    .filter(data -> data.getTimestamp().isBefore(timestamp))
+                    .findFirst();
+
+            // If an entry was found, add it to the result list
+            entry.ifPresent(result::add);
+        }
+
+        return result;
+    }
+
 
 }
