@@ -3,10 +3,14 @@ package com.girindex.backend.resource;
 import com.girindex.backend.domain.FoodData;
 import com.girindex.backend.domain.FoodDataService;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Path("/food-data")
@@ -52,4 +56,11 @@ public class FoodDataResource {
         }
     }
 
+
+    @GET
+    @Path("/latest")
+    public Response getLatestForPlacesUntil(@QueryParam("until") LocalDateTime until) {
+        Map<String, FoodData> latestForPlaces = service.getLatestForPlacesUntil(until);
+        return Response.ok(latestForPlaces).build();
+    }
 }

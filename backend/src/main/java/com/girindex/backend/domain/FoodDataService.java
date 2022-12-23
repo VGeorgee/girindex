@@ -6,7 +6,9 @@ import io.quarkus.panache.common.Sort;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -43,6 +45,13 @@ public class FoodDataService {
 
     public Optional<FoodData> getMostRecentForPlace(String place) {
         return repository.getMostRecentForPlace(place).map(mapper::toDomain);
+    }
+
+
+    public Map<String, FoodData> getLatestForPlacesUntil(LocalDateTime until) {
+        Map<String, FoodDataEntity> latestForPlaces = repository.getLatestForPlacesUntil(until);
+        return latestForPlaces.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> mapper.toDomain(e.getValue())));
     }
 
 }

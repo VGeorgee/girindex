@@ -31,8 +31,9 @@ public class FoodDataRepository implements PanacheRepository<FoodDataEntity> {
         }
     }
 
-    public Map<String, FoodDataEntity> getLatestForPlaces() {
-        TypedQuery<Object[]> query = entityManager.createQuery("SELECT fd.place, MAX(fd.timestamp) FROM FoodDataEntity fd GROUP BY fd.place", Object[].class);
+    public Map<String, FoodDataEntity> getLatestForPlacesUntil(LocalDateTime until) {
+        TypedQuery<Object[]> query = entityManager.createQuery("SELECT fd.place, MAX(fd.timestamp) FROM FoodDataEntity fd WHERE fd.timestamp <= :until GROUP BY fd.place", Object[].class);
+        query.setParameter("until", until);
         List<Object[]> resultList = query.getResultList();
         Map<String, FoodDataEntity> latestForPlaces = new HashMap<>();
         resultList.forEach(arr -> {
