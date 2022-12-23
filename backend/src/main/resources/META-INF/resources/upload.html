@@ -67,7 +67,7 @@
     </style>
 </head>
 <body>
-<form class="form-container" method="POST" action="/food-data">
+<form class="form-container" method="POST" onsubmit="submitForm(event)">
     <table>
         <tr>
             <td><label for="name">Name:</label></td>
@@ -98,4 +98,28 @@
     <p>Background photo by <a href="https://unsplash.com/@alexandermils">Alexander Mils</a> on Unsplash</p>
 </div>
 </body>
+<script>
+    async function submitForm(event) {
+        event.preventDefault(); // Prevent the form from being submitted
+
+        // Get the form data
+        const formData = new FormData(event.target);
+        const data = {};
+        for (const [key, value] of formData.entries()) {
+            data[`"${key}"`] = value;
+        }
+
+        // Send the HTTP request
+        const response = await fetch('/food-data', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        // Handle the response
+        console.log(await response.json());
+    }
+</script>
 </html>
