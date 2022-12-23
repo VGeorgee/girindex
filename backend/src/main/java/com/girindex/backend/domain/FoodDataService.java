@@ -6,6 +6,7 @@ import io.quarkus.panache.common.Sort;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ public class FoodDataService {
         return mapper.toDomain(repository.findById(id));
     }
 
+    @Transactional
     public FoodData create(FoodData foodData) {
         FoodDataEntity entity = mapper.toEntity(foodData);
         repository.persist(entity);
