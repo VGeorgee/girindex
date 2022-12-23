@@ -7,6 +7,7 @@ import io.quarkus.panache.common.Sort;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,24 @@ public class FoodDataService {
         Map<String, FoodDataEntity> latestForPlaces = repository.getLatestForPlacesUntil(until);
         return latestForPlaces.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> mapper.toDomain(e.getValue())));
+    }
+
+    @Transactional
+    public List<TimeEntry> getTimeSeries() {
+        List<FoodData> data = this.getAll();
+
+        return data.stream()
+                .collect(Collectors.groupingBy(FoodData::getTimestamp))
+                .entrySet().stream()
+                .map(entry -> {
+                    double avgPrice = entry.getValue().stream()
+                            .mapToInt(FoodData::getPrice)
+                            .average()
+                            .orElse(0);
+                    return new TimeEntry(entry.getKey(), avgPrice);
+                })
+                .sorted((e1, e2) -> e1.timestamp.compareTo(e2.timestamp))
+                .collect(Collectors.toList());
     }
 
 }
