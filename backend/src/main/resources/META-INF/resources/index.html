@@ -18,7 +18,25 @@
         .then(function(response) {
           return response.json();
         })
-        .then(function(data) {
+        .then(function(chartData) {
+
+        // Assume chartData is the array of chart data received from the server
+        data = chartData.sort((a, b) => {
+          // Convert the timestamp strings to Date objects
+          const dateA = new Date(a.timestamp);
+          const dateB = new Date(b.timestamp);
+
+          // Compare the dates and return the result of the comparison
+          if (dateA < dateB) {
+            return -1;
+          } else if (dateA > dateB) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
+
+
           // Create an array of labels for the x-axis
           var labels = data.map(function(d) {
             return d.timestamp.substring(0, 10);
