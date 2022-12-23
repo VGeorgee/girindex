@@ -98,6 +98,7 @@
         </tr>
     </table>
 </form>
+<ul id="error-list" style="display: none;"></ul>
 <div style="position: absolute; bottom: 0; width: 100%; text-align: center; background-color: #4d79ff;">
     <p>Background photo by <a href="https://unsplash.com/@alexandermils">Alexander Mils</a> on Unsplash</p>
 </div>
@@ -120,13 +121,22 @@
                 'content-type': 'application/json'
             },
             body: JSON.stringify(data)
-        });
+            });
 
-        // Handle the response
-        if (response.ok) {
-          window.location.href = 'index.html';
-        } else {
-          console.error(`Error: ${response.status}`);
+            // Handle the response
+            if (response.ok) {
+              window.location.href = 'index.html';
+            } else {
+            const errorList = document.getElementById('error-list');
+            errorList.innerHTML = ''; // clear the previous errors
+
+            violations.forEach(violation => {
+              const li = document.createElement('li');
+              li.innerText = `${violation.propertyPath}: ${violation.message}`;
+              errorList.appendChild(li);
+            });
+
+            errorList.style.display = 'block';
         }
     }
 </script>
