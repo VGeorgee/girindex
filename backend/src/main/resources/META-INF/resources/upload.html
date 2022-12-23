@@ -106,6 +106,9 @@
         <tr>
             <td colspan="2"><input type="submit" value="Submit"></td>
         </tr>
+        <div id="error-container">
+            <!-- errors for individual form fields will be displayed here -->
+        </div>
     </table>
 </form>
 <div style="position: absolute; bottom: 0; width: 100%; text-align: center; background-color: #4d79ff;">
@@ -136,18 +139,21 @@
             if (response.ok) {
               window.location.href = 'index.html';
             } else {
-                const errorList = document.getElementById('error-list');
-                errorList.innerHTML = ''; // clear the previous errors
+                const errorContainer = document.getElementById('error-container');
+                errorContainer.innerHTML = ''; // clear the previous errors
 
                 const violations = await response.json();
                 violations.violations.forEach(violation => {
-                  const li = document.createElement('li');
-                  li.innerText = `${violation.field}: ${violation.message}`;
-                  errorList.appendChild(li);
-                });
+                  const fieldName = violation.field.split('.').pop(); // remove the prefix and keep the last part
+                  const field = document.querySelector(`[name=${fieldName}]`);
 
-                errorList.style.display = 'block';
-            }
+                  const div = document.createElement('div');
+                  div.innerText = violation.message;
+                  div.style.color = '#f00';
+                  div.style.fontStyle = 'italic';
+                  field.after(div);
+            });
+        }
     }
 </script>
 </html>
