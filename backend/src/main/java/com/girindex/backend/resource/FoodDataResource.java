@@ -35,9 +35,12 @@ public class FoodDataResource {
 
     @POST
     public Response create(FoodData foodData) {
+        LocalDateTime now = LocalDateTime.now();
+        foodData.setTimestamp(now);
         FoodData createdFoodData = service.create(foodData);
         return Response.ok(createdFoodData).build();
     }
+
 
     @DELETE
     @Path("{id}")
