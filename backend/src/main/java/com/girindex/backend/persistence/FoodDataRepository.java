@@ -7,7 +7,10 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -28,4 +31,18 @@ public class FoodDataRepository implements PanacheRepository<FoodDataEntity> {
         }
     }
 
+    public Map<String, FoodDataEntity> getLatestForPlaces() {
+        TypedQuery<Object[]> query = entityManager.createQuery("SELECT fd.place, MAX(fd.timestamp) FROM FoodDataEntity fd GROUP BY fd.place", Object[].class);
+        List<Object[]> resultList = query.getResultList();
+        Map<String, FoodDataEntity> latestForPlaces = new HashMap<>();
+        resultList.forEach(arr -> {
+            String place = (String) arr[0];
+            LocalDateTime timestamp = (LocalDateTime) arr[1];
+            TypedQuery<FoodDataEntity> innerQuery = entityManager.createQuery("SELECT fd FROM FoodDataEntity fd WHERE fd.place = :place AND fd.timestamp = :timestamp", FoodDataEntity.class);
+            innerQuery.setParameter("place", place);
+            innerQuery.setParameter("timestamp", timestamp);
+            latestForPlaces.put(place, innerQuery.getSingleResult());
+        });
+        return latestForPlaces;
+    }
 }
