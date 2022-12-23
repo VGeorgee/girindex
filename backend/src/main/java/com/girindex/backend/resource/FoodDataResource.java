@@ -6,6 +6,7 @@ import com.girindex.backend.domain.TimeEntry;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -18,6 +19,8 @@ import java.util.Optional;
 @Produces("application/json")
 @Consumes("application/json")
 public class FoodDataResource {
+    @Inject
+    ResourceLayerMapper mapper;
 
     @Inject
     FoodDataService service;
@@ -34,11 +37,11 @@ public class FoodDataResource {
     }
 
     @POST
-    public Response create(FoodData foodData) {
-        LocalDateTime now = LocalDateTime.now();
-        foodData.setTimestamp(now);
+    public Response create(@Valid FoodDataCreationRequest request) {
+        FoodData foodData = mapper.toDomain(request);
+        foodData.setTimestamp(LocalDateTime.now());
         FoodData createdFoodData = service.create(foodData);
-        return Response.ok(createdFoodData).build();
+        return Response.ok(mapper.toResource(createdFoodData)).build();
     }
 
 
