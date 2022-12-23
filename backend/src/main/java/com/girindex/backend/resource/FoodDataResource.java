@@ -58,8 +58,8 @@ public class FoodDataResource {
 
 
     @GET
-    @Path("/latest")
-    public Response getLatestForPlacesUntil(@QueryParam("until") LocalDateTime until) {
+    @Path("/latest-entries/{until}")
+    public Response getLatestEntries(@PathParam("until") @DefaultValue(value = "now") LocalDateTime until) {
         Map<String, FoodData> latestForPlaces = service.getLatestForPlacesUntil(until);
         return Response.ok(latestForPlaces).build();
     }
