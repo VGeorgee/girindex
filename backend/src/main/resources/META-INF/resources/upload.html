@@ -50,6 +50,14 @@
             border-radius: 4px;
         }
 
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
         input[type="submit"] {
             width: 100%;
             background-color: #4CAF50;
@@ -83,11 +91,7 @@
         </tr>
         <tr>
             <td><label for="price">Price:</label></td>
-            <td><input type="text" id="price" name="price" required></td>
-        </tr>
-        <tr>
-            <td><label for="timestamp">Timestamp:</label></td>
-            <td><input type="text" id="timestamp" name="timestamp" required></td>
+            <td><input type="number" id="price" name="price" required></td>
         </tr>
         <tr>
             <td colspan="2"><input type="submit" value="Submit"></td>
@@ -106,7 +110,7 @@
         const formData = new FormData(event.target);
         const data = {};
         for (const [key, value] of formData.entries()) {
-            data[`"${key}"`] = value;
+            data[key] = value;
         }
 
         // Send the HTTP request
