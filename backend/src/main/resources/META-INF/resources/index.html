@@ -7,7 +7,55 @@
     window.addEventListener('load', function() {
       // Your chart code goes here
 
-        var ctx = document.getElementById('myChart').getContext('2d');
+    // Get the canvas element
+      var ctx = document.getElementById('myChart').getContext('2d');
+
+      // Make an HTTP GET request to the endpoint to retrieve the chart data
+      fetch('/food-data/chart')
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(data) {
+          // Create an array of labels for the x-axis
+          var labels = data.map(function(d) {
+            return d.timestamp;
+          });
+
+          // Create an array of data values for the y-axis
+          var values = data.map(function(d) {
+            return d.avgPrice;
+          });
+
+          // Create a new Chart.js chart
+          var chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: labels,
+              datasets: [
+                {
+                  label: 'Average Price',
+                  data: values,
+                  backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                  borderColor: 'rgba(255, 99, 132, 1)',
+                  borderWidth: 1
+                }
+              ]
+            },
+            options: {
+              scales: {
+                yAxes: [
+                  {
+                    ticks: {
+                      beginAtZero: true
+                    }
+                  }
+                ]
+              }
+            }
+          });
+        });
+
+
     });
   </script>
     <title>Girindex</title>
