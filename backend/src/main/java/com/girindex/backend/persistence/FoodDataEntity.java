@@ -22,7 +22,7 @@ public class FoodDataEntity {
     private String name;
     private String place;
     private String location;
-    private String price;
+    private Integer price;
     private LocalDateTime timestamp;
 
 }
