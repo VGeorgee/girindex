@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 
-class TimeEntry {
+public class TimeEntry {
     LocalDateTime timestamp;
     double avgPrice;
 

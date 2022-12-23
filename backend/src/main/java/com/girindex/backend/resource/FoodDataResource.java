@@ -2,6 +2,7 @@ package com.girindex.backend.resource;
 
 import com.girindex.backend.domain.FoodData;
 import com.girindex.backend.domain.FoodDataService;
+import com.girindex.backend.domain.TimeEntry;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -62,5 +63,12 @@ public class FoodDataResource {
     public Response getLatestEntries(@PathParam("until") @DefaultValue(value = "now") LocalDateTime until) {
         Map<String, FoodData> latestForPlaces = service.getLatestForPlacesUntil(until);
         return Response.ok(latestForPlaces).build();
+    }
+
+    @Path("/chart")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TimeEntry> getTimeSeries() {
+        return service.getTimeSeries();
     }
 }
