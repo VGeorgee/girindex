@@ -123,7 +123,11 @@
         });
 
         // Handle the response
-        console.log(await response.json());
+        if (response.ok) {
+          window.location.href = 'index.html';
+        } else {
+          console.error(`Error: ${response.status}`);
+        }
     }
 </script>
 </html>
