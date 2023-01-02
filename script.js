@@ -1,10 +1,14 @@
 const fs = require('fs');
+const allData = JSON.parse(fs.readFileSync('data.json'));
+
+// Sort the data by timestamp in reverse order
+reverseAllData = [...allData].sort((a, b) => new Date(b.date) - new Date(a.date));
 
 function getTimeSeries() {
   let timeSeries = [];
-  let allData = JSON.parse(fs.readFileSync('data.json'));
+
   for (let current of allData) {
-    let otherEntries = findAllBeforeTimestamp(current.timestamp, current.place);
+    let otherEntries = findAllBeforeTimestamp(current.date, current.place);
     let totalPrice = current.price;
     for (let other of otherEntries) {
       totalPrice += other.price;
@@ -12,7 +16,7 @@ function getTimeSeries() {
     let averagePrice = totalPrice / (otherEntries.length + 1);
     timeSeries.push({
       place: current.place,
-      date: current.timestamp,
+      date: current.date,
       price: averagePrice
     });
   }
@@ -21,15 +25,10 @@ function getTimeSeries() {
 
 
 function findAllBeforeTimestamp(timestamp, place) {
-  // Read all data from the database
-  let allData = this.getAll();
 
-  // Sort the data by timestamp in reverse order
-  allData.sort((a, b) => -a.timestamp.compareTo(b.timestamp));
-
+  reverseAllData.sort((a, b) => new Date(b.date) - new Date(a.date));
   // Create a set of distinct places from the data
   let places = new Set(allData.map(data => data.place));
-
   // Initialize the result list
   let result = [];
 
@@ -41,9 +40,9 @@ function findAllBeforeTimestamp(timestamp, place) {
     }
 
     // Find the first entry in the sorted list with the same place as the current place
-    // and with a timestamp less than the parameter
-    let entry = allData.find(data => data.place === currentPlace && data.timestamp.isBefore(timestamp));
-
+    // and with a date less than the parameter
+    let entry = reverseAllData.find(data => data.place === currentPlace && new Date(data.date) < new Date(timestamp));
+    console.log({entry})
     // If an entry was found, add it to the result list
     if (entry) {
       result.push(entry);
@@ -52,3 +51,6 @@ function findAllBeforeTimestamp(timestamp, place) {
 
   return result;
 }
+
+let timeSeries = getTimeSeries();
+fs.writeFileSync('avg.json', JSON.stringify(timeSeries, null, 2));
