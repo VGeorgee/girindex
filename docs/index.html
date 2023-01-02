@@ -23,8 +23,8 @@
         // Assume chartData is the array of chart data received from the server
         data = chartData.sort((a, b) => {
           // Convert the timestamp strings to Date objects
-          const dateA = new Date(a.timestamp);
-          const dateB = new Date(b.timestamp);
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
 
           // Compare the dates and return the result of the comparison
           if (dateA < dateB) {
@@ -39,12 +39,12 @@
 
           // Create an array of labels for the x-axis
           var labels = data.map(function(d) {
-            return d.timestamp;
+            return d.date;
           });
 
           // Create an array of data values for the y-axis
           var values = data.map(function(d) {
-            return d.avgPrice;
+            return d.price;
           });
 
           // Create a new Chart.js chart
