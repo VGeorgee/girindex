@@ -53,4 +53,4 @@ function findAllBeforeTimestamp(timestamp, place) {
 }
 
 let timeSeries = getTimeSeries();
-fs.writeFileSync('avg.json', JSON.stringify(timeSeries, null, 2));
+fs.writeFileSync('output.json', JSON.stringify(timeSeries, null, 2));
